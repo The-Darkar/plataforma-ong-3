@@ -1,38 +1,40 @@
 document.addEventListener("DOMContentLoaded", () => {
   const content = document.getElementById("content");
-  const links = document.querySelectorAll("nav ul li a");
+  const links = document.querySelectorAll("nav a");
 
   // Função para carregar páginas via fetch
   async function loadPage(url) {
     try {
       const response = await fetch(url);
-      if (!response.ok) throw new Error("Erro ao carregar a página");
+      if (!response.ok) throw new Error("Página não encontrada");
       const html = await response.text();
       content.innerHTML = html;
-
-      // Inicializa máscaras/validações se houver formulário
-      initMasks();
+      initMasks(); // Inicializa máscaras e validações sempre que o conteúdo muda
     } catch (error) {
-      content.innerHTML = `<p>Erro ao carregar o conteúdo: ${error.message}</p>`;
+      content.innerHTML = `<p>Erro ao carregar a página: ${error.message}</p>`;
     }
   }
 
-  // Intercepta clique nos links do menu
+  // Intercepta os cliques nos links do menu
   links.forEach(link => {
     link.addEventListener("click", (e) => {
       e.preventDefault();
-      const url = link.getAttribute("href");
-      history.pushState(null, null, url); // Atualiza URL sem recarregar
-      loadPage(url);
+      const href = link.getAttribute("href");
+      loadPage(href);
+      history.pushState({ page: href }, "", href);
     });
   });
 
-  // Permite navegação com botões voltar/avançar do navegador
-  window.addEventListener("popstate", () => {
-    loadPage(location.pathname);
+  // Suporte ao botão "Voltar" do navegador
+  window.addEventListener("popstate", (event) => {
+    if (event.state && event.state.page) {
+      loadPage(event.state.page);
+    } else {
+      loadPage("index.html");
+    }
   });
 
-  // Máscaras de input para formulário
+  // Inicializa máscaras de formulário
   function initMasks() {
     const cpf = document.getElementById("cpf");
     const telefone = document.getElementById("telefone");
@@ -40,25 +42,30 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (cpf) {
       cpf.addEventListener("input", () => {
-        cpf.value = cpf.value
-          .replace(/\D/g, "")
-          .replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+        cpf.value = cpf.value.replace(/\D/g, "").replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
       });
     }
 
     if (telefone) {
       telefone.addEventListener("input", () => {
-        telefone.value = telefone.value
-          .replace(/\D/g, "")
-          .replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+        telefone.value = telefone.value.replace(/\D/g, "").replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
       });
     }
 
     if (cep) {
       cep.addEventListener("input", () => {
-        cep.value = cep.value
-          .replace(/\D/g, "")
-          .replace(/(\d{5})(\d{3})/, "$1-$2");
+        cep.value = cep.value.replace(/\D/g, "").replace(/(\d{5})(\d{3})/, "$1-$2");
+      });
+    }
+
+    // Validação de formulário (exemplo)
+    const form = document.querySelector("form");
+    if (form) {
+      form.addEventListener("submit", (e) => {
+        if (!form.checkValidity()) {
+          e.preventDefault();
+          alert("Por favor, preencha todos os campos corretamente!");
+        }
       });
     }
   }
