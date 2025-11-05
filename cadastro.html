@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Cadastro - ONG Esperança</title>
   <link rel="stylesheet" href="css/style.css">
+  <script src="js/script.js" defer></script>
 </head>
 <body>
   <header>
@@ -19,8 +20,9 @@
   </header>
 
   <main>
-    <form>
+    <form id="formCadastro">
       <h2>Formulário de Cadastro</h2>
+
       <label for="nome">Nome Completo</label>
       <input type="text" id="nome" name="nome" required>
 
@@ -28,17 +30,17 @@
       <input type="email" id="email" name="email" required>
 
       <label for="telefone">Telefone</label>
-      <input type="tel" id="telefone" name="telefone">
+      <input type="tel" id="telefone" name="telefone" required>
 
       <label for="projeto">Projeto de Interesse</label>
-      <select id="projeto" name="projeto">
+      <select id="projeto" name="projeto" required>
         <option value="comunidade-viva">Projeto Comunidade Viva</option>
         <option value="voluntariado">Voluntariado</option>
         <option value="doacoes">Doações</option>
       </select>
 
       <label>
-        <input type="checkbox" name="aceite" required>
+        <input type="checkbox" id="aceite" name="aceite" required>
         Concordo com os termos
       </label>
 
@@ -49,5 +51,26 @@
   <footer>
     <p>&copy; 2025 ONG Esperança</p>
   </footer>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const formCadastro = document.getElementById('formCadastro');
+      const telefone = document.getElementById("telefone");
+
+      formCadastro.addEventListener("submit", (e) => {
+        e.preventDefault();
+        if (formCadastro.checkValidity()) {
+          alert("Cadastro realizado com sucesso!");
+          formCadastro.reset(); // Limpar formulário após envio
+        } else {
+          alert("Por favor, preencha todos os campos corretamente.");
+        }
+      });
+
+      telefone.addEventListener("input", () => {
+        telefone.value = telefone.value.replace(/\D/g, "").replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+      });
+    });
+  </script>
 </body>
 </html>
