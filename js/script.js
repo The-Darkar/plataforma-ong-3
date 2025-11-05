@@ -1,40 +1,54 @@
-document.addEventListener("DOMContentLoaded", () => {
-  const cpf = document.getElementById("cpf");
-  const telefone = document.getElementById("telefone");
-  const cep = document.getElementById("cep");
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ONG Esperança</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="js/script.js" defer></script>
+</head>
+<body>
+  <header>
+    <h1>ONG Esperança</h1>
+    <nav>
+      <ul>
+        <li><a href="index.html">Início</a></li>
+        <li><a href="projetos.html">Projetos</a></li>
+        <li><a href="cadastro.html">Cadastro</a></li>
+      </ul>
+    </nav>
+  </header>
 
-  // Função para trocar o conteúdo da página
-  const loadPage = (page) => {
-    fetch(page)
-      .then(response => response.text())
-      .then(data => {
-        document.getElementById('content').innerHTML = data;
-      });
-  };
+  <!-- Div que será preenchida com o conteúdo da página via SPA -->
+  <div id="content">
+    <section>
+      <h2>Quem Somos</h2>
+      <p>Promovemos inclusão social por meio de projetos comunitários.</p>
+      <img src="assets/img/equipe.jpg" alt="Equipe da ONG">
+    </section>
 
-  // Inicialização do SPA (alterar o conteúdo inicial)
-  loadPage("index.html");
+    <section>
+      <h2>Missão, Visão e Valores</h2>
+      <ul>
+        <li><strong>Missão:</strong> Transformar vidas.</li>
+        <li><strong>Visão:</strong> Ser referência em impacto social.</li>
+        <li><strong>Valores:</strong> Transparência, empatia, compromisso.</li>
+      </ul>
+    </section>
 
-  // Evento para o clique no menu
-  const navLinks = document.querySelectorAll("nav ul li a");
-  navLinks.forEach(link => {
-    link.addEventListener("click", (event) => {
-      event.preventDefault();
-      const page = link.getAttribute("href");
-      loadPage(page);
-    });
-  });
+    <section>
+      <img src="assets/img/projetosocial.jpg" alt="Projeto Social">
+    </section>
 
-  // Máscaras de input
-  cpf.addEventListener("input", () => {
-    cpf.value = cpf.value.replace(/\D/g, "").replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
-  });
+    <section>
+      <h2>Contato</h2>
+      <p>Email: contato@ongesperanca.org</p>
+      <p>Telefone: (11) 99999-9999</p>
+    </section>
+  </div>
 
-  telefone.addEventListener("input", () => {
-    telefone.value = telefone.value.replace(/\D/g, "").replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
-  });
-
-  cep.addEventListener("input", () => {
-    cep.value = cep.value.replace(/\D/g, "").replace(/(\d{5})(\d{3})/, "$1-$2");
-  });
-});
+  <footer>
+    <p>&copy; 2025 ONG Esperança</p>
+  </footer>
+</body>
+</html>
