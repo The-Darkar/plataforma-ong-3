@@ -1,54 +1,68 @@
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ONG Esperança</title>
-  <link rel="stylesheet" href="css/style.css">
-  <script src="js/script.js" defer></script>
-</head>
-<body>
-  <header>
-    <h1>ONG Esperança</h1>
-    <nav>
-      <ul>
-        <li><a href="index.html">Início</a></li>
-        <li><a href="projetos.html">Projetos</a></li>
-        <li><a href="cadastro.html">Cadastro</a></li>
-      </ul>
-    </nav>
-  </header>
+document.addEventListener("DOMContentLoaded", () => {
+  const content = document.getElementById("content");
+  const links = document.querySelectorAll("nav ul li a");
 
-  <!-- Div que será preenchida com o conteúdo da página via SPA -->
-  <div id="content">
-    <section>
-      <h2>Quem Somos</h2>
-      <p>Promovemos inclusão social por meio de projetos comunitários.</p>
-      <img src="assets/img/equipe.jpg" alt="Equipe da ONG">
-    </section>
+  // Função para carregar páginas via fetch
+  async function loadPage(url) {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("Erro ao carregar a página");
+      const html = await response.text();
+      content.innerHTML = html;
 
-    <section>
-      <h2>Missão, Visão e Valores</h2>
-      <ul>
-        <li><strong>Missão:</strong> Transformar vidas.</li>
-        <li><strong>Visão:</strong> Ser referência em impacto social.</li>
-        <li><strong>Valores:</strong> Transparência, empatia, compromisso.</li>
-      </ul>
-    </section>
+      // Inicializa máscaras/validações se houver formulário
+      initMasks();
+    } catch (error) {
+      content.innerHTML = `<p>Erro ao carregar o conteúdo: ${error.message}</p>`;
+    }
+  }
 
-    <section>
-      <img src="assets/img/projetosocial.jpg" alt="Projeto Social">
-    </section>
+  // Intercepta clique nos links do menu
+  links.forEach(link => {
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      const url = link.getAttribute("href");
+      history.pushState(null, null, url); // Atualiza URL sem recarregar
+      loadPage(url);
+    });
+  });
 
-    <section>
-      <h2>Contato</h2>
-      <p>Email: contato@ongesperanca.org</p>
-      <p>Telefone: (11) 99999-9999</p>
-    </section>
-  </div>
+  // Permite navegação com botões voltar/avançar do navegador
+  window.addEventListener("popstate", () => {
+    loadPage(location.pathname);
+  });
 
-  <footer>
-    <p>&copy; 2025 ONG Esperança</p>
-  </footer>
-</body>
-</html>
+  // Máscaras de input para formulário
+  function initMasks() {
+    const cpf = document.getElementById("cpf");
+    const telefone = document.getElementById("telefone");
+    const cep = document.getElementById("cep");
+
+    if (cpf) {
+      cpf.addEventListener("input", () => {
+        cpf.value = cpf.value
+          .replace(/\D/g, "")
+          .replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
+      });
+    }
+
+    if (telefone) {
+      telefone.addEventListener("input", () => {
+        telefone.value = telefone.value
+          .replace(/\D/g, "")
+          .replace(/(\d{2})(\d{5})(\d{4})/, "($1) $2-$3");
+      });
+    }
+
+    if (cep) {
+      cep.addEventListener("input", () => {
+        cep.value = cep.value
+          .replace(/\D/g, "")
+          .replace(/(\d{5})(\d{3})/, "$1-$2");
+      });
+    }
+  }
+
+  // Carrega a página inicial
+  loadPage("index.html");
+});
